@@ -1,0 +1,62 @@
+{
+    "version": "0.1.0",
+    "name": "escrow_dapp",
+    "instructions": [
+      {
+        "name": "createEscrow",
+        "accounts": [
+          {
+            "name": "escrow",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "from",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "to",
+            "isMut": true,
+            "isSigner": false
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    ],
+    "accounts": [
+      {
+        "name": "EscrowAccount",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "from",
+              "type": "publicKey"
+            },
+            {
+              "name": "to",
+              "type": "publicKey"
+            },
+            {
+              "name": "amount",
+              "type": "u64"
+            }
+          ]
+        }
+      }
+    ],
+    "metadata": {
+      "address": "EciS9NNhNVVW41WKP1k4fW9nho5bRz6fXta4GEjq3hzU"
+    }
+  }

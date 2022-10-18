@@ -1,0 +1,50 @@
+{
+  "name": "test",
+  "primary_intent_service": "Best Effort Internet Connectivity",
+  "pricing": [
+    {
+      "micro_payment_rate": {
+        "minimum_value": 0,
+        "maximum_value": 34,
+        "interval": "50MB",
+        "price": {
+          "currency": "WITS",
+          "price": 200
+        }
+      },
+      "billing_frequency": "Daily"
+    },
+    {
+      "micro_payment_rate": {
+        "minimum_value": 0,
+        "maximum_value": 40,
+        "interval": "50MB",
+        "price": {
+          "currency": "WITS",
+          "price": 400
+        }
+      },
+      "billing_frequency": "Daily"
+    }
+  ],
+  "places": [
+    {
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -25.27610424532989,
+          131.3351376953125
+        ]
+      }
+    },
+    {
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          -25.136555188235626,
+          131.2795326525867
+        ]
+      }
+    }
+  ]
+}
