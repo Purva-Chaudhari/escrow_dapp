@@ -1,62 +1,57 @@
 {
-    "version": "0.1.0",
-    "name": "escrow_dapp",
-    "instructions": [
-      {
-        "name": "createEscrow",
-        "accounts": [
+  "version": "0.1.0",
+  "name": "po_b",
+  "instructions": [
+    {
+      "name": "startChallenge",
+      "accounts": [
+        {
+          "name": "store",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "PoB",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
-            "name": "escrow",
-            "isMut": true,
-            "isSigner": false
+            "name": "bump",
+            "type": "u8"
           },
-          {
-            "name": "from",
-            "isMut": true,
-            "isSigner": true
-          },
-          {
-            "name": "to",
-            "isMut": true,
-            "isSigner": false
-          },
-          {
-            "name": "systemProgram",
-            "isMut": false,
-            "isSigner": false
-          }
-        ],
-        "args": [
           {
             "name": "amount",
             "type": "u64"
           }
         ]
       }
-    ],
-    "accounts": [
-      {
-        "name": "EscrowAccount",
-        "type": {
-          "kind": "struct",
-          "fields": [
-            {
-              "name": "from",
-              "type": "publicKey"
-            },
-            {
-              "name": "to",
-              "type": "publicKey"
-            },
-            {
-              "name": "amount",
-              "type": "u64"
-            }
-          ]
-        }
-      }
-    ],
-    "metadata": {
-      "address": "EciS9NNhNVVW41WKP1k4fW9nho5bRz6fXta4GEjq3hzU"
     }
+  ],
+  "metadata": {
+    "address": "89rLWWdw1Lb3jbCYvPFGkf3RLAUhPcmjf9pxr4KA4JyE"
   }
+}

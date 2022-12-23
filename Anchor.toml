@@ -2,13 +2,13 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-escrow_dapp = "EciS9NNhNVVW41WKP1k4fW9nho5bRz6fXta4GEjq3hzU"
+escrow_dapp = "89rLWWdw1Lb3jbCYvPFGkf3RLAUhPcmjf9pxr4KA4JyE"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "/Users/purvachaudhari/.config/solana/id.json"
 
 [scripts]

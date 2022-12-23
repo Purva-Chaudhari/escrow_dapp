@@ -13,12 +13,18 @@ import {useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
 import assert from 'assert';
 import { hex } from '@project-serum/anchor/dist/cjs/utils/bytes';
 
-const idl = require('../public/idl.json');
+const idl = require('../../target/idl/po_b.json');
+import { PoB } from '../../target/idl/po_b.json'
 const utf8 = utils.bytes.utf8
+
 
 const Home: NextPage = () => {
     const [data , setData]=useState(null)
+
+    /*useAnchorWallet is imported from solana/wallet-adapters which is the main library we use for anchor functions*/
     const anchorWallet = useAnchorWallet();
+    
+    /* Loading json */
     useEffect(() => {
         fetch("./sample_product.json").then(
             function(res){
@@ -31,80 +37,66 @@ const Home: NextPage = () => {
               console.log(err, ' error')
             }
           )
-    //     const script = document.createElement('script');
-      
-    //     script.src = "https://solpay.togatech.org/sdk.js";
-    //     script.async = true;
-    //     console.log(SOLPay)
-      
-    //     document.body.appendChild(script);
-      
-    //     return () => {
-            
-    //       document.body.removeChild(script);
-
-    //     }
         
       }, []);
-
-    
-
-// Fetch Function   
-
-
   
     async function sendTransaction() {
         if (!anchorWallet) {
             return;
         }
         
-        //const network = "http://127.0.0.1:8899";
+        const network = "http://127.0.0.1:8899";
         
         
-        console.log(data.name)
-        const wallet = await SOLPay.connectWallet();
-        console.log("Checking wallet", wallet)
-        console.log("Anchor wallet", anchorWallet)
-        
-        const network = "https://api.devnet.solana.com"
+        //const network = "https://api.devnet.solana.com"
         const connection = new Connection(network, "processed");
         const provider = new AnchorProvider(
           connection, anchorWallet, {"preflightCommitment": "processed"},
         );
+        console.log("Program address : ",idl.metadata.address)
         const program = new Program(idl, idl.metadata.address, provider);
+        //const program = workspace.PoB as Program<PoB>;
+        console.log("Program  : ",program)
 
         try {
             
-            const transaction = new Transaction();
-            let blockhash = await (await connection.getLatestBlockhash('finalized')).blockhash;
-            transaction.recentBlockhash = blockhash;
-            transaction.feePayer = anchorWallet.publicKey
-            
-            //const signedTransaction = await provider.signTransaction(transaction);
-            const message = `To avoid digital dognappers, sign below to authenticate with CryptoCorgis`;
-            const encodedMessage = new TextEncoder().encode(message);
-            const signedMessage = await SOLPay.signMessage(data);
-            console.log(signedMessage)
-            console.log(anchorWallet)
-            // const signedTransaction = await anchorWallet.signTransaction(transaction);
-            // const signature = await connection.sendRawTransaction(signedTransaction.serialize());
-            // console.log(new Date().toISOString())
-            // assert (signedTransaction.signature != null)
-            // console.log(signedTransaction)
-            // console.log(signature)
-            //await anchorWallet.
-            
-            //console.log(new TextDecoder("utf-8").decode(signedTransaction.signature))
+
+          let amount = 10000;
+    
+          const [payerPDA, payerBump] = await web3.PublicKey.findProgramAddress(
+            [Buffer.from("challenge"), anchorWallet.publicKey.toBuffer()], 
+            program.programId
+          )
+          console.log(anchorWallet.publicKey.toBuffer())
+
+          let balPda = await provider.connection.getBalance(payerPDA)
+          console.log("Balance Pda before sol : ", balPda)
+          console.log("Payer PDA : ", payerPDA.toBase58())
+
+          const tx = await program.methods.startChallenge(
+            new BN(payerBump),
+            new BN(amount)).accounts({
+              
+                store: payerPDA,
+                payer: anchorWallet.publicKey,
+                systemProgram: web3.SystemProgram.programId,
+              
+            }).rpc();
+    let balPayer = await provider.connection.getBalance(anchorWallet.publicKey)
+    console.log("Balance Payer after sol : ", balPayer)
+    let balPda1 = await provider.connection.getBalance(payerPDA)
+    console.log("Balance PDA after sol : ", balPda1)
+    console.log("Your transaction signature", tx);
 
             // const toKey = new PublicKey("C93r5S43itAXPDsSsDWuj6Cn3tavt84dxnwv5K53MvBH");
             // const [escrowPDA] = await web3.PublicKey.findProgramAddress(
-            //     [utf8.encode('escrow'), anchorWallet.publicKey.toBuffer(), toKey.toBuffer()],
+            //     [utf8.encode('challenge'), anchorWallet.publicKey.toBuffer()],
             //     program.programId,
             // );
 
             // console.log("escrowPDA", escrowPDA);
 
-            // const trans = await program.methods.createEscrow(new BN(1000000000)).accounts({
+            // const trans = await program.methods.start(new BN(1000000000)).accounts({
             //     escrow: escrowPDA,
             //     from: anchorWallet.publicKey,
             //     to: toKey,

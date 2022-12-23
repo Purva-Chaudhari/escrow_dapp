@@ -2,61 +2,62 @@ use anchor_lang::prelude::*;
 use std::mem::size_of;
 //use anchor_spl::token::{Token, MintTo, Transfer};
 
-declare_id!("EciS9NNhNVVW41WKP1k4fW9nho5bRz6fXta4GEjq3hzU");
+declare_id!("89rLWWdw1Lb3jbCYvPFGkf3RLAUhPcmjf9pxr4KA4JyE");
 
 #[program]
-pub mod escrow_dapp {
+pub mod po_b {
     use super::*;
 
-    pub fn create_escrow(ctx: Context<CreateEscrow>, amount: u64) -> Result<()> {
-        // Get Escrow Account
-        let escrow = &mut ctx.accounts.escrow;
+    pub fn start_challenge(ctx: Context<StartChallenge>, 
+        bump: u8, 
+        amount: u64
+    ) -> Result<()> {
+        let store = &mut ctx.accounts.store;
+        let payer = &mut ctx.accounts.payer;
 
-        // Set from
-        escrow.from = ctx.accounts.from.key();
-        // Set to
-        escrow.to = ctx.accounts.to.key();
-        // set amount
-        escrow.amount = amount;
-
+        store.amount = amount;
+        store.bump = bump;
+        let ix = anchor_lang::solana_program::system_instruction::transfer(
+            &payer.to_account_info().key(),
+            &store.to_account_info().key(),
+            amount,
+        
+        );
+        anchor_lang::solana_program::program::invoke(
+            &ix,
+            &[
+                payer.to_account_info(),
+                store.to_account_info(),
+            ],
+        ).ok();
         Ok(())
     }
+    
 }
 
-/// CreateEscrow context
 #[derive(Accounts)]
-pub struct CreateEscrow<'info> {
-    // Escrow Account PDA
+#[instruction(bump: u8)]
+pub struct StartChallenge<'info> {
+   
     #[account(
-        //init,
-        init_if_needed,
-        // State account seed uses the string "state" and the users' key. 
-        // Note that we can only have 1 active transaction
-        seeds = [b"escrow".as_ref(), from.key().as_ref(), to.key().as_ref()],
+        init, 
+        seeds = [b"challenge".as_ref(), payer.key().as_ref()],
         bump,
-        payer = from,
-        space = size_of::<EscrowAccount>() + 16
-    )]
-    pub escrow: Account<'info, EscrowAccount>,
-
-    #[account(mut)]
-    pub from: Signer<'info>,
-    /// CHECK: safe
-    #[account(mut)]
-    pub to: AccountInfo<'info>,
-
-    pub system_program: Program<'info, System>,
+        payer = payer,
+        space = size_of::<PoB>() + 32)]
+    store: Account<'info, PoB>,
+   
+      #[account(mut)]
+      payer: Signer<'info>,
+      system_program: Program<'info, System>,
 }
 
-// Escrow Account Structure
 #[account]
-pub struct EscrowAccount {
-    // From address
-    pub from: Pubkey,
-
-    // To address
-    pub to: Pubkey,
-
-    // Amount that is owed
-    pub amount: u64,
+#[derive(Default)]
+pub struct PoB {
+    bump: u8,
+    amount: u64,
 }
+
+// end challenge
+// 1 chall
